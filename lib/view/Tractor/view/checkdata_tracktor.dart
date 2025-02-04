@@ -1,7 +1,7 @@
 import 'package:firebase_getx/Widget/widgetall.dart';
 import 'package:firebase_getx/theme/color.dart';
 import 'package:firebase_getx/theme/fonts.dart';
-import 'package:firebase_getx/view/Sold_rice/view/success.dart';
+import 'package:firebase_getx/roungtong/Sold_rice/view/success.dart';
 import 'package:firebase_getx/view/Status_carOrder/controller/statuscar_controller.dart';
 import 'package:firebase_getx/view/Tractor/controller/tractor_controller.dart';
 import 'package:flutter/material.dart';

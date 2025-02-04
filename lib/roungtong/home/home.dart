@@ -1,12 +1,14 @@
 import 'package:firebase_getx/roungtong/home/controller.dart';
+import 'package:firebase_getx/roungtong/status/status.dart';
 import 'package:firebase_getx/theme/color.dart';
 import 'package:firebase_getx/theme/fonts.dart';
-import 'package:firebase_getx/view/Sold_rice/view/view_soldrice.dart';
+import 'package:firebase_getx/roungtong/Sold_rice/view/view_soldrice.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Home1 extends GetView<Homecontroller1> {
   const Home1({super.key});
@@ -216,8 +218,55 @@ class Home1 extends GetView<Homecontroller1> {
                       ctrl.containerManu(
                           const ViewSoldrice(), "images/a.png", "ขายข้าว"),
                       const Spacer(),
-                      ctrl.containerManu(const ViewSoldrice(), "images/map.png",
-                          "เส้นทางไปโรงสี")
+                      GestureDetector(
+                        onTap: () async {
+                          String googleMapsUrl =
+                              "https://maps.app.goo.gl/nPsMRBE8YQCaGFH89";
+                          Uri url = Uri.parse(googleMapsUrl);
+
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url,
+                                mode: LaunchMode.externalApplication);
+                          } else {
+                            Get.snackbar(
+                                "ข้อผิดพลาด", "ไม่สามารถเปิด Google Maps ได้");
+                          }
+                        },
+                        child: Container(
+                          width: w * 0.42,
+                          height: h * 0.12,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: AppColor.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(
+                                    0.2), // เงาสีดำครึ่งหนึ่งของความทึบแสง
+                                blurRadius: 10, // ความนุ่มนวลของเงา
+                                spreadRadius: 2, // ขนาดที่เงาขยายตัว
+                                offset: const Offset(0, 4), // ตำแหน่งของเงา
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: h * 0.0075,
+                                ),
+                                Image.asset(
+                                  "images/map.png",
+                                  width: w * 0.15,
+                                  fit: BoxFit.cover,
+                                ),
+                                Text("เส้นทางไปโรงสี",
+                                    style: AppFonts.fonmanu
+                                        .copyWith(fontSize: 16)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                   SizedBox(
@@ -230,46 +279,74 @@ class Home1 extends GetView<Homecontroller1> {
                         style: AppFonts.headder,
                       ),
                       const Spacer(),
-                      const Text(
-                        "สถานะทั้งหมด",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.orange),
+                      InkWell(
+                        onTap: () {
+                          Get.to(Status());
+                        },
+                        child: const Text(
+                          "สถานะทั้งหมด",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange),
+                        ),
                       )
                     ],
                   ),
                   Container(
-                    height: h * 0.05,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 10,
-                          spreadRadius: 0.2,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: w * 0.05),
-                          child: Text(
-                            "รถสำหรับข้าว \n1,000 - 3,000 กิโลกรัม",
-                            style: AppFonts.midderd,
+                      height: h * 0.05,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 10,
+                            spreadRadius: 0.2,
+                            offset: const Offset(0, 3),
                           ),
-                        ),
-                        const Spacer(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: w * 0.025),
-                          child: Text("กำลังมาหาคุณ",
-                              style: AppFonts.headder
-                                  .copyWith(color: Colors.green)),
-                        ),
-                      ],
-                    ),
-                  ),
+                        ],
+                      ),
+                      child: Obx(() {
+                        // ตรวจสอบว่ามีข้อมูลใน carOrders หรือไม่
+                        if (ctrl.carOrders.isEmpty) {
+                          return Center(
+                              child: Text(
+                            "ยังไม่มีรายการจองรถ",
+                            style: AppFonts.midderd,
+                          )); // หรือข้อความอื่น ๆ
+                        }
+
+                        // ดึงข้อมูลการสั่งรถที่ต้องการ
+                        var carOrder = ctrl
+                            .carOrders.first; // หรือเลือกตาม index ที่ต้องการ
+
+                        return Row(
+                          children: [
+                            Padding(
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: w * 0.025),
+                              child: Text(
+                                " รถสำหรับข้าว \n ${carOrder['cartype']}" ??
+                                    "ยังไม่มีการเรียกรถ", // แสดง cartype
+                              ),
+                            ),
+                            const Spacer(),
+                            Padding(
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: w * 0.025),
+                              child: Text(
+                                carOrder['status'] == 1
+                                    ? "กำลังมาหาคุณ"
+                                    : "ยังไม่มา", // แสดง status
+                                style: AppFonts.headder.copyWith(
+                                    color: carOrder['status'] == 1
+                                        ? Colors.green
+                                        : Colors.red),
+                              ),
+                            ),
+                          ],
+                        );
+                      })),
                   SizedBox(
                     height: h * 0.015,
                   ),

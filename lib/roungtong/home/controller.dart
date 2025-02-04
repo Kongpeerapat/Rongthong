@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart'; // นำเข้า Firebase Firestore เพื่อดึงข้อมูล
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_getx/theme/color.dart';
 import 'package:firebase_getx/theme/fonts.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,7 @@ import 'package:flutter/widgets.dart'; // นำเข้า Widgets เพื�
 class Homecontroller1 extends GetxController {
   var ricePrices = <Map<String, dynamic>>[]
       .obs; // เก็บข้อมูลราคาข้าวในรูปแบบ List ของ Map โดยใช้ .obs เพื่อให้ UI อัปเดตอัตโนมัติ
+  RxList<Map<String, dynamic>> carOrders = <Map<String, dynamic>>[].obs;
   var w = Get.width;
   var h = Get.height;
   var isLoading = true
@@ -21,6 +25,7 @@ class Homecontroller1 extends GetxController {
   void onInit() {
     // ฟังก์ชันนี้จะทำงานอัตโนมัติเมื่อ Controller ถูกสร้างขึ้น
     super.onInit(); // เรียกใช้งาน onInit() ของ GetxController
+    fetchCarOrders();
     fetchRicePrices(); // เรียกใช้ฟังก์ชันโหลดข้อมูลราคาข้าวจาก Firestore
     scrollController.addListener(() {
       // เพิ่ม Listener เพื่อตรวจจับการเลื่อน ScrollView
@@ -50,6 +55,27 @@ class Homecontroller1 extends GetxController {
             "Error fetching rice prices: $error"); // แสดงข้อความ error ใน console
         isLoading.value =
             false; // เปลี่ยนสถานะ isLoading เป็น false เพื่อหยุดแสดง Loading Indicator
+      },
+    );
+  }
+
+  void fetchCarOrders() {
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      print("No user logged in");
+      return;
+    }
+
+    FirebaseFirestore.instance.collection('carOder').snapshots().listen(
+      (snapshot) {
+        carOrders.value = snapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .where(
+                (order) => order['userId'] == userId) // กรองเฉพาะของ userId นี้
+            .toList();
+      },
+      onError: (error) {
+        print("Error fetching car orders: $error");
       },
     );
   }
@@ -131,7 +157,8 @@ class Homecontroller1 extends GetxController {
                         borderRadius: BorderRadius.circular(30),
                         color: Colors.white,
                       ),
-                      clipBehavior: Clip.hardEdge, // บังคับให้ตัดขอบตาม BorderRadius
+                      clipBehavior:
+                          Clip.hardEdge, // บังคับให้ตัดขอบตาม BorderRadius
                       child: Image.network(
                         image,
                         fit: BoxFit.cover,

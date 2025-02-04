@@ -4,7 +4,7 @@ import 'package:firebase_getx/theme/fonts.dart';
 import 'package:firebase_getx/view/Fertilizer/view/fertillizer_view.dart';
 import 'package:firebase_getx/view/Home/home_controller.dart';
 import 'package:firebase_getx/view/Reward/view/reward.dart';
-import 'package:firebase_getx/view/Sold_rice/view/view_soldrice.dart';
+import 'package:firebase_getx/roungtong/Sold_rice/view/view_soldrice.dart';
 import 'package:firebase_getx/view/Tractor/view/tracktor_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

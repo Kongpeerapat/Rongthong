@@ -1,8 +1,8 @@
 import 'package:firebase_getx/Widget/widgetall.dart';
 import 'package:firebase_getx/theme/color.dart';
 import 'package:firebase_getx/theme/fonts.dart';
-import 'package:firebase_getx/view/Sold_rice/controller/controller_soldrice.dart';
-import 'package:firebase_getx/view/Sold_rice/view/checkdata.dart';
+import 'package:firebase_getx/roungtong/Sold_rice/controller/controller_soldrice.dart';
+import 'package:firebase_getx/roungtong/Sold_rice/view/checkdata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -119,16 +119,16 @@ class ViewSoldrice extends GetView<ControllerSoldrice> {
                 Padding(
                   padding: EdgeInsets.only(left: w * 0.096),
                   child: GestureDetector(
-                    // onTap: () async {
-                    //   await crtl
-                    //       .getCurrentLocation(); // ✅ กดแล้วเรียกฟังก์ชันดึงโลเคชัน
-                    // },
+                    onTap: () async {
+                      await Get.dialog(crtl.dialog());
+                    },
                     child: Widgetall.cotainerTextfield(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: h * 0.002, horizontal: w * 0.05),
-                        child: Obx(() =>
-                            Text(crtl.currentLocation.value)), // ✅ แสดงค่าพิกัด
+                        child: Obx(() => Center(
+                            child: Text(
+                                crtl.currentLocation.value))), // ✅ แสดงค่าพิกัด
                       ),
                     ),
                   ),
@@ -152,6 +152,7 @@ class ViewSoldrice extends GetView<ControllerSoldrice> {
                       child: Obx(
                         () => GestureDetector(
                           onTap: () {
+                            crtl.point.value = 10;
                             crtl.pricecarwidth.value = 800;
                             crtl.carwidth("1000-3000 กิโลกรัม");
                             crtl.choose("car1");
@@ -183,6 +184,7 @@ class ViewSoldrice extends GetView<ControllerSoldrice> {
                       child: Obx(
                         () => GestureDetector(
                           onTap: () {
+                            crtl.point.value = 30;
                             crtl.pricecarwidth.value = 1000;
                             crtl.carwidth("1500-3000 กิโลกรัม");
                             crtl.choose("car2");
@@ -223,6 +225,7 @@ class ViewSoldrice extends GetView<ControllerSoldrice> {
                       child: Obx(
                         () => GestureDetector(
                           onTap: () {
+                            crtl.point.value = 50;
                             crtl.pricecarwidth.value = 1500;
                             crtl.carwidth("6000-10000 กิโลกรัม");
                             crtl.choose('car3');
@@ -254,6 +257,7 @@ class ViewSoldrice extends GetView<ControllerSoldrice> {
                       child: Obx(
                         () => GestureDetector(
                           onTap: () {
+                            crtl.point.value = 120;
                             crtl.pricecarwidth.value = 8000;
                             crtl.carwidth("20000-30000 กิโลกรัม");
                             crtl.choose('car4');
